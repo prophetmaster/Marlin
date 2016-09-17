@@ -87,6 +87,8 @@
   #include "twibus.h"
 #endif
 
+#include "autocalibration.cpp"
+
 /**
  * Look here for descriptions of G-codes:
  *  - http://linuxcnc.org/handbook/gcode/g-code.html
@@ -337,7 +339,9 @@ float home_offset[XYZ] = { 0 };
   bool soft_endstops_enabled = true;
 #endif
 float soft_endstop_min[XYZ] = { X_MIN_POS, Y_MIN_POS, Z_MIN_POS },
-      soft_endstop_max[XYZ] = { X_MAX_POS, Y_MAX_POS, Z_MAX_POS };
+	  soft_endstop_max[XYZ] = { X_MAX_POS, Y_MAX_POS, Z_MAX_POS };
+
+  float hotend_offset[XYZ][HOTENDS];
 
 #if FAN_COUNT > 0
   int fanSpeeds[FAN_COUNT] = { 0 };
@@ -3397,7 +3401,7 @@ inline void gcode_G28() {
 
     bed_leveling_in_progress = true;
 
-    float xProbe, yProbe, measured_z = 0;
+    float xProbe, yProbe;
 
     #if ENABLED(AUTO_BED_LEVELING_GRID)
 
